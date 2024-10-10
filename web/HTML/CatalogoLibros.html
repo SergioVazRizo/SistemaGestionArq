@@ -48,6 +48,11 @@
                         <div id="formLibro">
                             <form id="formLibro">
                                 <div class="form-group group">
+                                    <input id="cve_libro" type="text" class="form-control" readonly="">
+                                    <label for="cve_libro">Numero del libro</label>
+                                    <div class="bar"></div>
+                                </div>
+                                <div class="form-group group">
                                     <input id="nombre_libro" type="text" class="form-control" required>
                                     <label for="nombre_libro">Nombre del libro</label>
                                     <div class="bar"></div>
@@ -75,8 +80,8 @@
                             </form>
 
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <button type="button" class="btn btn-secondary" onclick="editarLibro()">Editar <i class='bx bx-edit'></i></button>
-                                <button type="button" class="btn btn-primary ml-auto" id="btnGuardar" onclick="agregarLibro()">Agregar <i class='bx bx-user-plus' ></i></button>
+                                <button type="button" class="btn btn-primary ml-auto" id="btnGuardar" onclick="agregarLibro()">Agregar <i class='bx bx-user-plus'></i></button>
+                                <button type="button" class="btn btn-primary ml-auto" id="btnEditar" onclick="editarLibro(cve_libro)">Editar <i class='bx bx-user-plus'></i></button>
                                 <button type="button" id="btnLimpiar" onclick="limpiarFormulario()">Limpiar <i class='bx bxs-eraser'></i></button>
                             </div>
                         </div>
@@ -87,10 +92,11 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Numero de libro</th>
                                     <th>Nombre del libro</th>
                                     <th>Autor del libro</th>
                                     <th>Genero del libro</th>
-                                    <th>Previsualización</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tablaLibro"></tbody>

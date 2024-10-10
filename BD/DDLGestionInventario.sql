@@ -18,7 +18,7 @@ Create Table Libro (
     nombre_libro varchar(250),
     autor_libro varchar(250),
     genero_libro varchar(250),
-    pfd_libro LONGBLOB
+    pdf_libro longtext
 );
 
 select * from Libro;

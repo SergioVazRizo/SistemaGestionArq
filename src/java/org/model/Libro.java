@@ -5,26 +5,18 @@ public class Libro {
     private String nombre_libro;
     private String autor_libro;
     private String genero_libro;
-    private byte[] pfd_libro; 
+    private String pdf_libro;
 
-    // Constructor completo (incluye PDF)
-    public Libro(int cve_libro, String nombre_libro, String autor_libro, String genero_libro, byte[] pfd_libro) {
+    public Libro(int cve_libro, String nombre_libro, String autor_libro, String genero_libro, String pdf_libro) {
         this.cve_libro = cve_libro;
         this.nombre_libro = nombre_libro;
         this.autor_libro = autor_libro;
         this.genero_libro = genero_libro;
-        this.pfd_libro = pfd_libro;
-    }
-
-    // Constructor sin ID para agregar un nuevo libro
-    public Libro(String nombre_libro, String autor_libro, String genero_libro, byte[] pfd_libro) {
-        this.nombre_libro = nombre_libro;
-        this.autor_libro = autor_libro;
-        this.genero_libro = genero_libro;
-        this.pfd_libro = pfd_libro;
+        this.pdf_libro = pdf_libro;
     }
 
     // Getters y Setters
+
     public int getCve_libro() {
         return cve_libro;
     }
@@ -57,11 +49,11 @@ public class Libro {
         this.genero_libro = genero_libro;
     }
 
-    public byte[] getPfd_libro() {
-        return pfd_libro;
+    public String getPdf_libro() {
+        return pdf_libro;
     }
 
-    public void setPfd_libro(byte[] pfd_libro) {
-        this.pfd_libro = pfd_libro;
+    public void setPdf_libro(String pdf_libro) {
+        this.pdf_libro = pdf_libro;
     }
 }
