@@ -13,3 +13,12 @@ CREATE TABLE Usuario (
     email           VARCHAR(100)
 );
 
+Create Table Libro (
+	cve_libro	int auto_increment primary key,
+    nombre_libro varchar(250),
+    autor_libro varchar(250),
+    genero_libro varchar(250),
+    pfd_libro LONGBLOB
+);
+
+select * from Libro;
