@@ -79,12 +79,6 @@ function previewPDF(event) {
     }
 }
 
-// Cargar libros al inicio
-window.onload = async function () {
-    verificarToken();
-    await cargarLibros();
-}
-
 async function cargarLibros() {
     const response = await fetch(BASE_URL + "api/libro/getAllLibros");
     const libros = await response.json();
@@ -166,9 +160,6 @@ function seleccionarLibro(cve_libro, nombre_libro, autor_libro, genero_libro, pd
     }
 }
 
-
-
-
 // Función para convertir base64 a Blob
 function base64ToBlob(base64, contentType) {
     const byteCharacters = atob(base64);
@@ -211,31 +202,6 @@ async function editarLibro() {
     }
 }
 
-
-
-async function actualizarLibro(cve_libro, pdf_libro) {
-    const response = await fetch(BASE_URL + `api/libro/editarLibro/${cve_libro}`, {
-        method: "PUT",
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `nombre_libro=${encodeURIComponent(document.getElementById("nombre_libro").value)}&` +
-                `autor_libro=${encodeURIComponent(document.getElementById("autor_libro").value)}&` +
-                `genero_libro=${encodeURIComponent(document.getElementById("genero_libro").value)}&` +
-                (pdf_libro ? `pdf_libro=${encodeURIComponent(pdf_libro)}` : '')
-    });
-
-    if (response.ok) {
-        Swal.fire("Éxito", "El libro se ha actualizado correctamente", "success");
-        limpiarFormulario(); // Limpiar el formulario después de actualizar
-        await cargarLibros(); // Recargar la tabla
-    } else {
-        Swal.fire("Error", "Hubo un problema al actualizar el libro", "error");
-    }
-}
-
-
-
 // Función para actualizar un libro
 async function actualizarLibro(cve_libro, pdf_libro) {
     const response = await fetch(BASE_URL + `api/libro/editarLibro/${cve_libro}`, {
@@ -251,8 +217,8 @@ async function actualizarLibro(cve_libro, pdf_libro) {
 
     if (response.ok) {
         Swal.fire("Éxito", "El libro se ha actualizado correctamente", "success");
-        limpiarFormulario(); // Limpiar el formulario después de actualizar
-        await cargarLibros(); // Recargar la tabla
+        limpiarFormulario(); 
+        await cargarLibros(); 
     } else {
         Swal.fire("Error", "Hubo un problema al actualizar el libro", "error");
     }
@@ -299,3 +265,9 @@ function removePDF() {
     fileInput.value = "";  // Limpiar el input del archivo PDF
 }
 
+
+// Cargar libros al inicio
+window.onload = async function () {
+    verificarToken();
+    await cargarLibros();
+}
