@@ -80,7 +80,7 @@ function previewPDF(event) {
 }
 
 async function cargarLibros() {
-    const response = await fetch(BASE_URL + "api/libro/getAllLibros");
+    const response = await fetch(BASE_URL + "libros");
     const libros = await response.json();
     const tablaLibro = document.getElementById("tablaLibro");
     tablaLibro.innerHTML = ""; // Limpiar tabla
@@ -96,6 +96,7 @@ async function cargarLibros() {
                 <button onclick="seleccionarLibro(${libro.cve_libro}, '${libro.nombre_libro}', '${libro.autor_libro}', '${libro.genero_libro}', '${libro.pdf_libro}')">Editar</button>
                 <button onclick="eliminarLibro(${libro.cve_libro})">Eliminar</button>
             </td>
+            <td><button onclick="cambiarEstatus(${libro.cve_libro})">Cambiar Estado</button></td>
         `;
         tablaLibro.appendChild(row);
     });
@@ -112,23 +113,28 @@ async function agregarLibro() {
 
     const reader = new FileReader();
     reader.onloadend = async function () {
-        const base64String = reader.result.split(',')[1]; 
+        const base64String = reader.result.split(',')[1];
 
-        const response = await fetch(BASE_URL + "api/libros", {
+        // Crear un objeto libro
+        const libro = {
+            nombre_libro: document.getElementById("nombre_libro").value,
+            autor_libro: document.getElementById("autor_libro").value,
+            genero_libro: document.getElementById("genero_libro").value,
+            pdf_libro: base64String,
+            estatus: document.getElementById("estatus").value === 'true' // Asegurarse de que el estatus sea un booleano
+        };
+
+        const response = await fetch(BASE_URL + "libros", {
             method: "POST",
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/json'
             },
-            body: `nombre_libro=${encodeURIComponent(document.getElementById("nombre_libro").value)}&` +
-                    `autor_libro=${encodeURIComponent(document.getElementById("autor_libro").value)}&` +
-                    `genero_libro=${encodeURIComponent(document.getElementById("genero_libro").value)}&` +
-                    `pdf_libro=${encodeURIComponent(base64String)}&` +
-                    `estatus=${encodeURIComponent(document.getElementById("estatus").value)}` // Agregar el estatus
+            body: JSON.stringify(libro) // Convertir el objeto libro a JSON
         });
 
         if (response.ok) {
             Swal.fire("Éxito", "El libro se ha agregado correctamente");
-            limpiarFormulario(); 
+            limpiarFormulario();
             cargarLibros();
         } else {
             Swal.fire("Error", "No se pudo agregar el libro", "error");
@@ -136,7 +142,6 @@ async function agregarLibro() {
     };
     reader.readAsDataURL(file);
 }
-
 
 function seleccionarLibro(cve_libro, nombre_libro, autor_libro, genero_libro, pdf_base64) {
     document.getElementById("cve_libro").value = cve_libro;  // Cargar cve_libro
