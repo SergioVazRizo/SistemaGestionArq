@@ -6,17 +6,18 @@ public class Libro {
     private String autor_libro;
     private String genero_libro;
     private String pdf_libro;
+    private Boolean estatus;
 
-    public Libro(int cve_libro, String nombre_libro, String autor_libro, String genero_libro, String pdf_libro) {
+    public Libro(int cve_libro, String nombre_libro, String autor_libro, String genero_libro, String pdf_libro, boolean estatus) {
         this.cve_libro = cve_libro;
         this.nombre_libro = nombre_libro;
         this.autor_libro = autor_libro;
         this.genero_libro = genero_libro;
         this.pdf_libro = pdf_libro;
+        this.estatus = estatus;
     }
 
     // Getters y Setters
-
     public int getCve_libro() {
         return cve_libro;
     }
@@ -56,4 +57,14 @@ public class Libro {
     public void setPdf_libro(String pdf_libro) {
         this.pdf_libro = pdf_libro;
     }
+
+    public Boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(Boolean estatus) {
+        this.estatus = estatus;
+    }
+    
+    
 }

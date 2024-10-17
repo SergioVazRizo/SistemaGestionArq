@@ -18,7 +18,8 @@ Create Table Libro (
     nombre_libro varchar(250),
     autor_libro varchar(250),
     genero_libro varchar(250),
-    pdf_libro longtext
+    pdf_libro longtext, 
+    estatus boolean
 );
 
 select * from Libro;

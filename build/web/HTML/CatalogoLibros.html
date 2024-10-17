@@ -68,6 +68,15 @@
                                     <div class="bar"></div>
                                 </div>
                                 <div class="form-group group">
+                                    <label for="estatus">Estatus</label><br>
+                                    <select id="estatus" class="form-control" required>
+                                        <option value="true">Activo</option>
+                                        <option value="false">Inactivo</option>
+                                    </select>
+                                    <div class="bar"></div>
+                                </div>
+
+                                <div class="form-group group">
                                     <input id="pfd_libro" type="file" class="form-control" accept="application/pdf" required onchange="previewPDF(event)">
                                 </div>
                                 <div id="pdfPreviewContainer" style="display: none;">
