@@ -68,6 +68,15 @@
                                     <div class="bar"></div>
                                 </div>
                                 <div class="form-group group">
+                                    <label for="estatus">Estatus</label><br>
+                                    <select id="estatus" class="form-control" required>
+                                        <option value="true">Activo</option>
+                                        <option value="false">Inactivo</option>
+                                    </select>
+                                    <div class="bar"></div>
+                                </div>
+
+                                <div class="form-group group">
                                     <input id="pfd_libro" type="file" class="form-control" accept="application/pdf" required onchange="previewPDF(event)">
                                 </div>
                                 <div id="pdfPreviewContainer" style="display: none;">
@@ -87,7 +96,7 @@
                         </div>
                         <br>
                         <input type="text" id="search-input" placeholder="Buscar...">
-                        <button id="search-button" onclick="buscarLibro()"><i class='bx bx-search-alt-2' ></i></button>
+                        <button id="search-button" onclick="findById()"><i class='bx bx-search-alt-2' ></i></button>
                         <br>
                         <table class="table table-bordered">
                             <thead>
@@ -97,6 +106,7 @@
                                     <th>Autor del libro</th>
                                     <th>Genero del libro</th>
                                     <th>Acciones</th>
+                                    <th>Activar</th>
                                 </tr>
                             </thead>
                             <tbody id="tablaLibro"></tbody>

@@ -80,7 +80,7 @@ function previewPDF(event) {
 }
 
 async function cargarLibros() {
-    const response = await fetch(BASE_URL + "api/libro/getAllLibros");
+    const response = await fetch(BASE_URL + "libros");
     const libros = await response.json();
     const tablaLibro = document.getElementById("tablaLibro");
     tablaLibro.innerHTML = ""; // Limpiar tabla
@@ -96,11 +96,11 @@ async function cargarLibros() {
                 <button onclick="seleccionarLibro(${libro.cve_libro}, '${libro.nombre_libro}', '${libro.autor_libro}', '${libro.genero_libro}', '${libro.pdf_libro}')">Editar</button>
                 <button onclick="eliminarLibro(${libro.cve_libro})">Eliminar</button>
             </td>
+            <td><button onclick="cambiarEstatus(${libro.cve_libro})">Cambiar Estado</button></td>
         `;
         tablaLibro.appendChild(row);
     });
 }
-
 
 async function agregarLibro() {
     const fileInput = document.getElementById("pfd_libro");
@@ -113,29 +113,34 @@ async function agregarLibro() {
 
     const reader = new FileReader();
     reader.onloadend = async function () {
-        const base64String = reader.result.split(',')[1]; // Extraer solo la parte Base64
+        const base64String = reader.result.split(',')[1];
 
-        const response = await fetch(BASE_URL + "api/libro/agregarLibro", {
+        // Crear un objeto libro
+        const libro = {
+            nombre_libro: document.getElementById("nombre_libro").value,
+            autor_libro: document.getElementById("autor_libro").value,
+            genero_libro: document.getElementById("genero_libro").value,
+            pdf_libro: base64String,
+            estatus: document.getElementById("estatus").value === 'true' // Asegurarse de que el estatus sea un booleano
+        };
+
+        const response = await fetch(BASE_URL + "libros", {
             method: "POST",
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/json'
             },
-            body: `nombre_libro=${encodeURIComponent(document.getElementById("nombre_libro").value)}&` +
-                    `autor_libro=${encodeURIComponent(document.getElementById("autor_libro").value)}&` +
-                    `genero_libro=${encodeURIComponent(document.getElementById("genero_libro").value)}&` +
-                    `pdf_libro=${encodeURIComponent(base64String)}`
+            body: JSON.stringify(libro) // Convertir el objeto libro a JSON
         });
 
         if (response.ok) {
-            Swal.fire("Éxito", "El libro se ha guardado correctamente", "success");
-            limpiarFormulario(); // Limpiar el formulario después de guardar
-            await cargarLibros(); // Recargar la tabla
+            Swal.fire("Éxito", "El libro se ha agregado correctamente");
+            limpiarFormulario();
+            cargarLibros();
         } else {
-            Swal.fire("Error", "Hubo un problema al guardar el libro", "error");
+            Swal.fire("Error", "No se pudo agregar el libro", "error");
         }
     };
-
-    reader.readAsDataURL(file); // Leer el archivo como Data URL
+    reader.readAsDataURL(file);
 }
 
 function seleccionarLibro(cve_libro, nombre_libro, autor_libro, genero_libro, pdf_base64) {
@@ -177,7 +182,8 @@ function base64ToBlob(base64, contentType) {
 }
 
 async function editarLibro() {
-    if (libroEditando === null) return; // Verificar si hay un libro en edición
+    if (libroEditando === null)
+        return; // Verificar si hay un libro en edición
 
     const fileInput = document.getElementById("pfd_libro");
     const file = fileInput.files[0];
@@ -217,8 +223,8 @@ async function actualizarLibro(cve_libro, pdf_libro) {
 
     if (response.ok) {
         Swal.fire("Éxito", "El libro se ha actualizado correctamente", "success");
-        limpiarFormulario(); 
-        await cargarLibros(); 
+        limpiarFormulario();
+        await cargarLibros();
     } else {
         Swal.fire("Error", "Hubo un problema al actualizar el libro", "error");
     }
@@ -226,19 +232,15 @@ async function actualizarLibro(cve_libro, pdf_libro) {
 
 // Función para eliminar un libro
 async function eliminarLibro(cve_libro) {
-    try {
-        const response = await fetch(`${BASE_URL}api/libro/eliminarLibro/${cve_libro}`, {
-            method: 'DELETE'
-        });
+    const response = await fetch(BASE_URL + `api/libro/eliminarLibro/${cve_libro}`, {
+        method: "DELETE"
+    });
 
-        if (response.ok) {
-            Swal.fire("Éxito", "El libro se ha eliminado correctamente", "success");
-            await cargarLibros() && limpiarFormulario(); // Recargar la tabla
-        } else {
-            Swal.fire("Error", "Hubo un problema al eliminar el libro", "error");
-        }
-    } catch (error) {
-        Swal.fire("Error", "Hubo un problema en la conexión", "error");
+    if (response.ok) {
+        Swal.fire("Éxito", "El libro se ha eliminado correctamente");
+        cargarLibros();
+    } else {
+        Swal.fire("Error", "No se pudo eliminar el libro", "error");
     }
 }
 
@@ -247,10 +249,10 @@ function limpiarFormulario() {
     document.getElementById("nombre_libro").value = "";
     document.getElementById("autor_libro").value = "";
     document.getElementById("genero_libro").value = "";
-    
+
     libroEditando = null; // Reiniciar la variable de edición
     document.getElementById("btnGuardar").innerText = "Agregar"; // Resetear el texto del botón
-    
+
     // Llamar a la función para limpiar el PDF
     removePDF();
 }
