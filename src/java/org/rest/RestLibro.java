@@ -12,44 +12,52 @@ import org.model.Libro;
 @Path("libro")
 public class RestLibro {
 
+    private final ControllerLibro cl = new ControllerLibro();
+    private final Gson gson = new Gson();
+
     @Path("getAllLibros")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public Response getAllLibros() {
-        String out = null;
-        List<Libro> libros = null;
-        ControllerLibro cl = new ControllerLibro();
         try {
-            libros = cl.getAllLibros();
-            out = new Gson().toJson(libros);
-        } catch (ClassNotFoundException | SQLException e) {
-            out = "{\"error\":\"Ocurrió un error. Intente más tarde.\"}";
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON).entity(out).build();
+            List<Libro> libros = cl.getAllLibros();
+            return Response.ok(gson.toJson(libros)).build();
+        } catch (SQLException | ClassNotFoundException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("{\"error\":\"Ocurrió un error. Intente más tarde.\"}")
+                           .build();
         }
-        return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(out).build();
     }
 
     @Path("agregarLibro")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response agregarLibro(@FormParam("nombre_libro") String nombre_libro,
-            @FormParam("autor_libro") String autor_libro,
-            @FormParam("genero_libro") String genero_libro,
-            @FormParam("pdf_libro") String pdf_libro) {
-        String out;
-        ControllerLibro cl = new ControllerLibro();
+                                 @FormParam("autor_libro") String autor_libro,
+                                 @FormParam("genero_libro") String genero_libro,
+                                 @FormParam("pdf_libro") String pdf_libro) throws SQLException {
+        if (nombre_libro == null || autor_libro == null || genero_libro == null || pdf_libro == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("{\"error\":\"Todos los campos son obligatorios.\"}")
+                           .build();
+        }
+
+        Libro nuevoLibro = new Libro(0, nombre_libro, autor_libro, genero_libro, pdf_libro);
         try {
-            Libro nuevoLibro = new Libro(0, nombre_libro, autor_libro, genero_libro, pdf_libro);
             boolean resultado = cl.agregarLibro(nuevoLibro);
             if (resultado) {
-                out = "{\"success\":\"Libro agregado correctamente\"}";
+                return Response.status(Response.Status.CREATED)
+                               .entity("{\"success\":\"Libro agregado correctamente\"}")
+                               .build();
             } else {
-                out = "{\"error\":\"No se pudo agregar el libro\"}";
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                               .entity("{\"error\":\"No se pudo agregar el libro\"}")
+                               .build();
             }
-            return Response.ok(out).build();
         } catch (ClassNotFoundException e) {
-            out = "{\"error\":\"Ocurrió un error. Intente más tarde.\"}";
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(out).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("{\"error\":\"Ocurrió un error. Intente más tarde.\"}")
+                           .build();
         }
     }
 
@@ -57,44 +65,50 @@ public class RestLibro {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response editarLibro(@PathParam("cve_libro") int cve_libro,
-            @FormParam("nombre_libro") String nombre_libro,
-            @FormParam("autor_libro") String autor_libro,
-            @FormParam("genero_libro") String genero_libro,
-            @FormParam("pdf_libro") String pdf_libro) {
-        String out;
-        ControllerLibro cl = new ControllerLibro();
+                                 @FormParam("nombre_libro") String nombre_libro,
+                                 @FormParam("autor_libro") String autor_libro,
+                                 @FormParam("genero_libro") String genero_libro,
+                                 @FormParam("pdf_libro") String pdf_libro) throws SQLException {
+        if (nombre_libro == null || autor_libro == null || genero_libro == null || pdf_libro == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("{\"error\":\"Todos los campos son obligatorios.\"}")
+                           .build();
+        }
+
+        Libro libro = new Libro(cve_libro, nombre_libro, autor_libro, genero_libro, pdf_libro);
         try {
-            Libro libro = new Libro(cve_libro, nombre_libro, autor_libro, genero_libro, pdf_libro);
             boolean resultado = cl.editarLibro(libro);
             if (resultado) {
-                out = "{\"success\":\"Libro editado correctamente\"}";
+                return Response.ok("{\"success\":\"Libro editado correctamente\"}").build();
             } else {
-                out = "{\"error\":\"No se pudo editar el libro\"}";
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                               .entity("{\"error\":\"No se pudo editar el libro\"}")
+                               .build();
             }
-            return Response.ok(out).build();
         } catch (ClassNotFoundException e) {
-            out = "{\"error\":\"Ocurrió un error. Intente más tarde.\"}";
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(out).build();
+                        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("{\"error\":\"Ocurrió un error. Intente más tarde.\"}")
+                           .build();
         }
     }
 
     @Path("eliminarLibro/{cve_libro}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    public Response eliminarLibro(@PathParam("cve_libro") int cve_libro) {
-        String out;
-        ControllerLibro cl = new ControllerLibro();
+    public Response eliminarLibro(@PathParam("cve_libro") int cve_libro) throws SQLException {
         try {
             boolean resultado = cl.eliminarLibro(cve_libro);
             if (resultado) {
-                out = "{\"success\":\"Libro eliminado correctamente\"}";
+                return Response.ok("{\"success\":\"Libro eliminado correctamente\"}").build();
             } else {
-                out = "{\"error\":\"No se pudo eliminar el libro\"}";
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                               .entity("{\"error\":\"No se pudo eliminar el libro\"}")
+                               .build();
             }
-            return Response.ok(out).build();
         } catch (ClassNotFoundException e) {
-            out = "{\"error\":\"Ocurrió un error. Intente más tarde.\"}";
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(out).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("{\"error\":\"Ocurrió un error. Intente más tarde.\"}")
+                           .build();
         }
     }
 }
